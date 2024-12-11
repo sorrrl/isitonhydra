@@ -20,8 +20,12 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
 
   const handleCopyUrl = (sourceName: string, index: number) => {
     const source = sources[index];
-    if (source.sourceUrl) {
-      navigator.clipboard.writeText(source.sourceUrl);
+    console.log('Source object:', source);
+    console.log('URL to be copied:', source.url);
+    console.log('Source URL:', source.sourceUrl);
+    
+    if (source.url) {
+      navigator.clipboard.writeText(source.url);
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
     }

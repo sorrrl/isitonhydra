@@ -114,8 +114,7 @@ async function findMatchingDownloads(
     const match = sortedMatches[0];
     return [{
       name: source.name,
-      url: match.uris[0] || '',
-      sourceUrl: source.url,
+      url: source.url,
       uploadDate: match.uploadDate,
       fileSize: match.fileSize
     }];
@@ -186,8 +185,7 @@ export async function searchGames(query: string, selectedSources: string[] = [])
         if (downloads.length > 0) {
           sources.push({
             name: source.name,
-            url: downloads[0].url,
-            sourceUrl: source.url,
+            url: source.url,
             uploadDate: downloads[0].uploadDate,
             fileSize: downloads[0].fileSize
           });
