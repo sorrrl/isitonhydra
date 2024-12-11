@@ -38,9 +38,25 @@ interface ConsolidatedGame {
 }
 
 interface SteamGame {
+  id: number;
   name: string;
-  id: string;
+  clientIcon?: string | null;
 }
+
+interface PreparedGame extends SteamGame {
+  cleanName: string;
+}
+
+// Function to prepare steam games for searching
+function prepareGames(games: any[]): PreparedGame[] {
+  return games.map(game => ({
+    ...game,
+    cleanName: game.name.toLowerCase().replace(/[^\w\s]/g, ' ').trim()
+  }));
+}
+
+// Prepare steam games once for faster searching
+const preparedSteamGames = prepareGames(steamGames as any[]);
 
 // Cache for source data to prevent repeated fetches
 const sourceCache = new Map<string, {
@@ -51,12 +67,6 @@ const sourceCache = new Map<string, {
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
 const MIN_QUERY_LENGTH = 3;
 const MAX_RESULTS = 20; // Limit total results
-
-// Prepare steam games once for faster searching
-const preparedSteamGames = (steamGames as SteamGame[]).map(game => ({
-  ...game,
-  cleanName: game.name.toLowerCase().replace(/[^\w\s]/g, ' ').trim()
-}));
 
 // First, find matching Steam games
 function findMatchingSteamGames(searchQuery: string): SteamGame[] {
