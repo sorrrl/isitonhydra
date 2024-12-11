@@ -1,20 +1,21 @@
 import steamGames from '@/data/steam-games.json'
 
 interface SteamGame {
+  id: number;
   name: string;
-  id: string;
+  clientIcon?: string | null;
 }
 
 export async function getGameImage(gameName: string): Promise<string | undefined> {
   try {
     // First try exact match
-    let steamGame = (steamGames as SteamGame[]).find(game => 
+    let steamGame = (steamGames as any[]).find(game => 
       game.name.toLowerCase() === gameName.toLowerCase()
     );
 
     // If no exact match, try partial match
     if (!steamGame) {
-      steamGame = (steamGames as SteamGame[]).find(game => {
+      steamGame = (steamGames as any[]).find(game => {
         // Try matching with the original names first
         if (gameName.toLowerCase().includes(game.name.toLowerCase()) || 
             game.name.toLowerCase().includes(gameName.toLowerCase())) {
