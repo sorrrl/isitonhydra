@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import steamGames from '@/data/steam-games.json'
 
 interface SteamGame {
-  id: string;
+  id: number;
   name: string;
+  clientIcon?: string | null;
 }
 
 export async function GET(request: Request) {
@@ -16,13 +17,13 @@ export async function GET(request: Request) {
 
   try {
     // Search for the game in steam-games.json
-    const steamGame = (steamGames as SteamGame[]).find(game => 
+    const steamGame = (steamGames as any[]).find(game => 
       game.name.toLowerCase() === title.toLowerCase() ||
       title.toLowerCase().includes(game.name.toLowerCase())
     );
 
     if (steamGame?.id) {
-      const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.id}/header.jpg`;
+      const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.id.toString()}/header.jpg`;
       return NextResponse.json({ imageUrl });
     }
 
