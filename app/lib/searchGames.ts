@@ -187,7 +187,7 @@ export async function searchGames(query: string, selectedSources: string[] = [])
           sources.push({
             name: source.name,
             url: downloads[0].url,
-            sourceUrl: downloads[0].sourceUrl,
+            sourceUrl: source.url,
             uploadDate: downloads[0].uploadDate,
             fileSize: downloads[0].fileSize
           });

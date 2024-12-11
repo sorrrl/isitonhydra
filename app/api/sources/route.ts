@@ -21,6 +21,8 @@ export async function GET(request: Request) {
     }
 
     const data = await response.json();
+    data.sourceUrl = source.url;
+    
     return NextResponse.json(data);
   } catch (error) {
     console.error(`Error fetching source ${sourceName}:`, error);
