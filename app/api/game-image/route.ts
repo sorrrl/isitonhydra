@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 import steamGames from '@/data/steam-games.json'
 
 interface SteamGame {
-  name: string;
   id: string;
+  name: string;
 }
 
 export async function GET(request: Request) {
