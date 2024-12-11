@@ -111,7 +111,7 @@ async function findMatchingDownloads(
   if (sortedMatches.length > 0) {
     const match = sortedMatches[0];
     return [{
-      sourceName: source.name,
+      name: source.name,
       url: match.uris[0] || '',
       uploadDate: match.uploadDate
     }];
@@ -150,7 +150,7 @@ async function fetchSourceData(source: { name: string; url: string }): Promise<S
 }
 
 interface ProcessedDownload {
-  sourceName: string;
+  name: string;
   url: string;
   uploadDate: string;
 }
