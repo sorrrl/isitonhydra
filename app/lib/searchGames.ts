@@ -7,6 +7,7 @@ export interface GameData {
   sources: { 
     name: string
     url: string
+    sourceUrl?: string
     uploadDate: string
     fileSize?: string
   }[]
@@ -114,7 +115,9 @@ async function findMatchingDownloads(
     return [{
       name: source.name,
       url: match.uris[0] || '',
-      uploadDate: match.uploadDate
+      sourceUrl: source.url,
+      uploadDate: match.uploadDate,
+      fileSize: match.fileSize
     }];
   }
 
@@ -153,7 +156,9 @@ async function fetchSourceData(source: { name: string; url: string }): Promise<S
 interface ProcessedDownload {
   name: string;
   url: string;
+  sourceUrl?: string;
   uploadDate: string;
+  fileSize?: string;
 }
 
 export async function searchGames(query: string, selectedSources: string[] = []): Promise<GameData[]> {
@@ -182,7 +187,9 @@ export async function searchGames(query: string, selectedSources: string[] = [])
           sources.push({
             name: source.name,
             url: downloads[0].url,
-            uploadDate: downloads[0].uploadDate
+            sourceUrl: downloads[0].sourceUrl,
+            uploadDate: downloads[0].uploadDate,
+            fileSize: downloads[0].fileSize
           });
         }
       } catch (error) {

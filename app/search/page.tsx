@@ -21,6 +21,7 @@ interface GameData {
   sources: { 
     name: string;
     url: string;
+    sourceUrl?: string;
     uploadDate: string;
     fileSize?: string;
   }[];
