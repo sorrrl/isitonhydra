@@ -20,10 +20,10 @@ export async function GET(request: Request) {
     const steamGame = (steamGames as any[]).find(game => 
       game.name.toLowerCase() === title.toLowerCase() ||
       title.toLowerCase().includes(game.name.toLowerCase())
-    );
+    ) as SteamGame | undefined;
 
     if (steamGame?.id) {
-      const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.id.toString()}/header.jpg`;
+      const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.id}/header.jpg`;
       return NextResponse.json({ imageUrl });
     }
 
