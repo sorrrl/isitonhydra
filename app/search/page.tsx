@@ -16,6 +16,17 @@ import { useLanguage } from '../context/LanguageContext'
 
 type SortType = 'date' | 'size'
 
+interface GameData {
+  name: string;
+  image?: string;
+  sources: { 
+    name: string;
+    url: string;
+    uploadDate: string;
+    fileSize?: string;
+  }[];
+}
+
 function SearchContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
