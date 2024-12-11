@@ -8,6 +8,7 @@ export interface GameData {
     name: string
     url: string
     uploadDate: string
+    fileSize?: string
   }[]
 }
 
