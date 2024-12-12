@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import StructuredData from './components/StructuredData'
 import { LanguageProvider } from './context/LanguageContext'
+import AnimatedBackground from './components/AnimatedBackground'
+import { Suspense } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -60,6 +62,9 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={inter.className}>
+        <Suspense fallback={null}>
+          <AnimatedBackground />
+        </Suspense>
         <LanguageProvider>
           {children}
         </LanguageProvider>
