@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Is it on Hydra?',
   description: 'Fast and reliable game search engine. Find games across multiple sources, with advanced filtering and sorting capabilities. Always up-to-date with the latest releases.',
-  keywords: 'game search, hydra launcher, game downloads, game finder, hydralinks',
+  keywords: 'game search, hydra launcher, game downloads, game finder, hydralinks, hydra, hydra sources, hydra fonte, hydra launcher sources, hydra launcher fonte, Esta no Hydra, is it on hydra?, isitonhydra?, moyase, Hydra Launcher Discord',
   openGraph: {
     title: 'Is it on Hydra?',
     description: 'Fast and reliable game search engine with advanced filtering capabilities',
