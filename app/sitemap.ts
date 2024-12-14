@@ -1,15 +1,17 @@
 import { MetadataRoute } from 'next'
 
+const baseUrl = 'https://isitonhydra.xyz'
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://isitonhydra.xyz',
+      url: `${baseUrl}`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: 'https://isitonhydra.xyz/search',
+      url: `${baseUrl}/search`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
