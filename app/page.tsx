@@ -7,7 +7,8 @@ import { useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { Github, MessageSquare, Globe } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
+import LanguageSwitcher from './components/LanguageSwitcher'
+import Announcement from './components/Announcement'
 
 export default function Home() {
   const router = useRouter()
@@ -27,11 +28,16 @@ export default function Home() {
         <LanguageSwitcher />
       </div>
 
-      <div className="max-w-2xl w-full space-y-8 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-white">
+      {/* Announcement - Made wider and more prominent */}
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 w-96 z-40 animate-fade-in-slow">
+        <Announcement />
+      </div>
+
+      <div className="max-w-2xl w-full space-y-8">
+        <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
           {t('title')}
         </h1>
-        <p className="text-zinc-400">
+        <p className="text-zinc-400 text-center">
           {t('subtitle')}
         </p>
 

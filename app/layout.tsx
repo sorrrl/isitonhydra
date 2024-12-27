@@ -5,6 +5,7 @@ import StructuredData from './components/StructuredData'
 import { LanguageProvider } from './context/LanguageContext'
 import AnimatedBackground from './components/AnimatedBackground'
 import { Suspense } from 'react'
+import Navbar from './components/Navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,6 +67,7 @@ export default function RootLayout({
           <AnimatedBackground />
         </Suspense>
         <LanguageProvider>
+          <Navbar />
           {children}
         </LanguageProvider>
       </body>

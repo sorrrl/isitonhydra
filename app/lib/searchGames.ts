@@ -4,13 +4,7 @@ import { jsonSources } from '../config/sources'
 export interface GameData {
   name: string
   image?: string
-  sources: { 
-    name: string
-    url: string
-    sourceUrl?: string
-    uploadDate: string
-    fileSize?: string
-  }[]
+  sources: ProcessedDownload[]
 }
 
 interface Download {
@@ -89,7 +83,7 @@ function findMatchingSteamGames(searchQuery: string): SteamGame[] {
 // Then, find matching downloads for each Steam game
 async function findMatchingDownloads(
   steamGame: SteamGame,
-  source: { name: string; url: string }
+  source: { name: string; url: string; additional_urls?: any[] }
 ): Promise<ProcessedDownload[]> {
   const data = await fetchSourceData(source);
   if (!data?.downloads) return [];
@@ -100,7 +94,6 @@ async function findMatchingDownloads(
   // Find downloads that match this game
   const matches = data.downloads.filter(download => {
     const cleanTitle = download.title.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
-    // Must contain all words from the Steam game name
     return gameWords.every(word => cleanTitle.includes(word));
   });
 
@@ -114,9 +107,10 @@ async function findMatchingDownloads(
     const match = sortedMatches[0];
     return [{
       name: source.name,
-      url: source.url,
+      url: match.uris[0],
       uploadDate: match.uploadDate,
-      fileSize: match.fileSize
+      fileSize: match.fileSize,
+      additional_urls: source.additional_urls
     }];
   }
 
@@ -158,6 +152,7 @@ interface ProcessedDownload {
   sourceUrl?: string;
   uploadDate: string;
   fileSize?: string;
+  additional_urls?: { name: string; url: string; description?: string }[];
 }
 
 export async function searchGames(query: string, selectedSources: string[] = []): Promise<GameData[]> {
@@ -181,14 +176,24 @@ export async function searchGames(query: string, selectedSources: string[] = [])
     // Search through selected sources
     for (const source of sourcesToSearch) {
       try {
+        console.log('Processing source config:', {
+          name: source.name,
+          hasAdditionalUrls: !!source.additional_urls,
+          additionalUrls: source.additional_urls
+        });
+
         const downloads = await findMatchingDownloads(steamGame, source);
         if (downloads.length > 0) {
-          sources.push({
+          const processedSource = {
             name: source.name,
-            url: source.url,
+            url: downloads[0].url,
             uploadDate: downloads[0].uploadDate,
-            fileSize: downloads[0].fileSize
-          });
+            fileSize: downloads[0].fileSize,
+            additional_urls: source.additional_urls
+          };
+
+          console.log('Created processed source:', processedSource);
+          sources.push(processedSource);
         }
       } catch (error) {
         console.error(`Error processing source ${source.name}:`, error);

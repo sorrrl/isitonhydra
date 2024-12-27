@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { translations, Language } from '../translations'
 
-type LanguageContextType = {
+interface LanguageContextType {
   language: Language
   setLanguage: (lang: Language) => void
   t: (key: string) => string
@@ -16,12 +16,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const savedLang = localStorage.getItem('language') as Language
-    if (savedLang && (savedLang === 'en' || savedLang === 'pt')) {
+    if (savedLang && translations[savedLang]) {
       setLanguage(savedLang)
     }
   }, [])
 
   const handleSetLanguage = (lang: Language) => {
+    console.log('Setting language to:', lang)
     setLanguage(lang)
     localStorage.setItem('language', lang)
   }
@@ -29,9 +30,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const t = (key: string) => {
     const keys = key.split('.')
     let value: any = translations[language]
+    
     for (const k of keys) {
       value = value?.[k]
     }
+    
     return value || key
   }
 
@@ -44,6 +47,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext)
-  if (!context) throw new Error('useLanguage must be used within a LanguageProvider')
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider')
+  }
   return context
 } 
