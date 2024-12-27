@@ -1,74 +1,108 @@
 'use client'
 
 import { useLanguage } from '../context/LanguageContext'
-
-interface UrlOption {
-  name: string
-  url: string
-  description?: string
-}
+import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 
 interface UrlSelectionPopupProps {
   isOpen: boolean
   onClose: () => void
-  options: UrlOption[]
+  options: Array<{
+    name: string
+    url: string
+    description?: string
+  }>
   onSelect: (url: string) => void
 }
 
-export default function UrlSelectionPopup({ 
-  isOpen, 
-  onClose, 
-  options, 
-  onSelect 
-}: UrlSelectionPopupProps) {
+export default function UrlSelectionPopup({ isOpen, onClose, options, onSelect }: UrlSelectionPopupProps) {
   const { t } = useLanguage()
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(null)
+  const [showCopied, setShowCopied] = useState(false)
 
-  if (!isOpen) return null;
+  // Reset states when popup closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedUrl(null)
+      setShowCopied(false)
+    }
+  }, [isOpen])
+
+  if (!isOpen) return null
+
+  const handleSelect = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url)
+      setSelectedUrl(url)
+      setShowCopied(true)
+      onSelect(url)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <>
+      {/* Backdrop */}
       <div 
-        className="w-full max-w-sm mx-4 overflow-hidden rounded-2xl bg-zinc-900/90 border border-zinc-800/50 shadow-xl transform transition-all"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="p-6">
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" 
+        onClick={onClose}
+      />
+
+      {/* Popup Container */}
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+        <div 
+          className="bg-zinc-900/95 border border-zinc-800/50 rounded-xl shadow-xl p-6 m-4" 
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Popup Title */}
           <h3 className="text-lg font-medium text-white mb-4">
             {t('gameResult.selectVersion')}
           </h3>
-          
+
+          {/* Version Options */}
           <div className="space-y-2">
-            {options.map((option, index) => (
+            {options.map((option) => (
               <button
-                key={index}
-                onClick={() => {
-                  onSelect(option.url);
-                  onClose();
-                }}
-                className="w-full flex flex-col gap-1 text-left p-3 rounded-lg hover:bg-white/5 transition-colors group"
+                key={option.url}
+                onClick={() => handleSelect(option.url)}
+                className={cn(
+                  "w-full px-4 py-3 rounded-lg text-left transition-all duration-200",
+                  "flex items-center justify-between",
+                  selectedUrl === option.url
+                    ? "bg-purple-500/20 text-purple-300"
+                    : "text-zinc-300 hover:bg-zinc-800/50"
+                )}
               >
-                <span className="text-white/90 group-hover:text-white font-medium">
-                  {option.name}
-                </span>
-                {option.description && (
-                  <span className="text-sm text-white/50 group-hover:text-white/60">
-                    {option.description}
+                <div className="flex-1">
+                  <div className="font-medium">{option.name}</div>
+                  {option.description && (
+                    <div className="text-xs text-zinc-500 mt-0.5">
+                      {option.description}
+                    </div>
+                  )}
+                </div>
+
+                {selectedUrl === option.url && showCopied && (
+                  <span className="text-xs text-green-500 ml-3">
+                    {t('gameResult.copied')}! ✓
                   </span>
                 )}
               </button>
             ))}
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-full mt-4 px-4 py-2.5 rounded-lg bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800 transition-colors"
-          >
-            {t('gameResult.cancel')}
-          </button>
+          {/* Footer with Close button */}
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={onClose}
+              className="px-6 py-2 text-sm bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors"
+            >
+              {t('common.close')}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    </>
+  )
 } 

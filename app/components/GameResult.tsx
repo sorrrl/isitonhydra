@@ -29,11 +29,11 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [showUrlPopup, setShowUrlPopup] = useState(false)
   const [selectedSource, setSelectedSource] = useState<Source | null>(null)
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   return (
     <>
-      <div className="relative group overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
+      <div className="relative overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
         {image && (
           <div className="absolute inset-0">
             <img
@@ -56,8 +56,6 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
           <div className="divide-y divide-zinc-800/30">
             {sources.map((source, index) => {
               const hasAdditionalUrls = source.additional_urls && source.additional_urls.length > 0;
-              const date = new Date(source.uploadDate)
-              const isRecent = (new Date().getTime() - date.getTime()) < 1000 * 60 * 60 * 24 * 7 // 7 days
               
               return (
                 <div
@@ -73,16 +71,9 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
                     </span>
 
                     <div className="hidden sm:flex items-center gap-1.5 text-zinc-500 text-xs">
-                      {isRecent ? (
-                        <Clock className="w-3.5 h-3.5 text-green-500/70" />
-                      ) : (
-                        <Calendar className="w-3.5 h-3.5" />
-                      )}
-                      <span className={cn(
-                        "tabular-nums",
-                        isRecent && "text-green-500/70"
-                      )}>
-                        {formatDate(source.uploadDate)}
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span className="tabular-nums">
+                        {formatDate(source.uploadDate, language)}
                       </span>
                     </div>
                   </div>
@@ -94,13 +85,13 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
                         setShowUrlPopup(true);
                       }}
                       className={cn(
-                        "flex items-center gap-2 flex-shrink-0 ml-8 px-3 py-1.5 rounded-lg",
+                        "flex items-center gap-1.5 px-2 py-1 rounded-lg",
                         "bg-zinc-800/50 text-zinc-400 opacity-0 group-hover/item:opacity-100",
                         "hover:bg-purple-500/20 hover:text-purple-300 transition-all duration-200 text-xs font-medium"
                       )}
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
-                      {t('gameResult.chooseVersion')}
+                      <span>{t('gameResult.select')}</span>
                     </button>
                   ) : (
                     <div className="relative flex-shrink-0 ml-8">
@@ -111,13 +102,13 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
                           setTimeout(() => setCopiedIndex(null), 2000);
                         }}
                         className={cn(
-                          "flex items-center gap-2 px-3 py-1.5 rounded-lg",
+                          "flex items-center gap-1.5 px-2 py-1 rounded-lg",
                           "bg-zinc-800/50 text-zinc-400 opacity-0 group-hover/item:opacity-100",
                           "hover:text-white transition-all duration-200 text-xs font-medium"
                         )}
                       >
                         <Copy className="w-3.5 h-3.5" />
-                        {t('gameResult.clickToCopy')}
+                        <span>{t('gameResult.copy')}</span>
                       </button>
                       {copiedIndex === index && (
                         <span className="absolute -top-8 right-0 px-2 py-1 bg-green-500/90 text-xs rounded-md text-white whitespace-nowrap animate-fade-in">
@@ -141,9 +132,11 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
           navigator.clipboard.writeText(url);
           if (selectedSource) {
             setCopiedIndex(sources.findIndex(s => s.name === selectedSource.name));
-            setTimeout(() => setCopiedIndex(null), 2000);
+            setTimeout(() => {
+              setCopiedIndex(null);
+              setShowUrlPopup(false);
+            }, 2000);
           }
-          setShowUrlPopup(false);
         }}
       />
     </>

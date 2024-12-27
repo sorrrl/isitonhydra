@@ -32,8 +32,8 @@ export const translations = {
       clearAll: "Clear All"
     },
     gameResult: {
-      chooseVersion: "Choose Version",
-      clickToCopy: "Click to copy",
+      select: "Select",
+      copy: "Copy",
       copied: "Copied!",
       selectVersion: "Select Version",
       cancel: "Cancel"
@@ -49,7 +49,10 @@ The source versions are identical but hosted on different servers. Russian users
 Thank you for reading!
 With love,
 Moyase`
-    }
+    },
+    common: {
+      close: 'Close',
+    },
   },
   pt: {
     title: "Está no Hydra?",
@@ -84,8 +87,8 @@ Moyase`
       clearAll: "Limpar Tudo"
     },
     gameResult: {
-      chooseVersion: "Escolher Versão",
-      clickToCopy: "Clique para copiar",
+      select: "Selecionar",
+      copy: "Copiar",
       copied: "Copiado!",
       selectVersion: "Selecionar Versão",
       cancel: "Cancelar"
@@ -101,7 +104,10 @@ As versões das fontes são idênticas, mas estão hospedadas em servidores dife
 Obrigado por ler!
 Com amor,
 Moyase`
-    }
+    },
+    common: {
+      close: 'Close',
+    },
   },
   ru: {
     title: "Is it on Hydra?",
@@ -136,8 +142,8 @@ Moyase`
       clearAll: "Очистить все"
     },
     gameResult: {
-      chooseVersion: "Выбрать версию",
-      clickToCopy: "Нажмите, чтобы скопировать",
+      select: "Выбрать",
+      copy: "Копировать",
       copied: "Скопировано!",
       selectVersion: "Выберите версию",
       cancel: "Отмена"
@@ -153,7 +159,10 @@ Moyase`
 Спасибо за внимание!
 С любовью,
 Moyase`
-    }
+    },
+    common: {
+      close: 'Закрыть',
+    },
   }
 }
 
