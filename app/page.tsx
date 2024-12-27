@@ -22,18 +22,26 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 relative">
       {/* Language Switcher */}
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
 
-      {/* Announcement - Made wider and more prominent */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 w-96 z-40 animate-fade-in-slow">
-        <Announcement />
+      {/* Announcement - Left side fixed with better positioning */}
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 w-[22rem] z-40 hidden lg:block pointer-events-none">
+        <div className="pointer-events-auto">
+          <Announcement />
+        </div>
       </div>
 
-      <div className="max-w-2xl w-full space-y-8">
+      {/* Main Content - Centered without margin */}
+      <div className="w-full max-w-2xl space-y-8">
+        {/* Mobile Announcement */}
+        <div className="lg:hidden w-full mb-8">
+          <Announcement />
+        </div>
+
         <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
           {t('title')}
         </h1>

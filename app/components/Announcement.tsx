@@ -13,14 +13,14 @@ export default function Announcement() {
       
       <div className="relative p-6">
         <div className="flex items-start gap-4">
-          <div className="relative">
+          <div className="relative hidden sm:block">
             <AlertTriangle className="w-6 h-6 text-orange-500 flex-shrink-0 mt-1 animate-pulse" />
             <div className="absolute inset-0 w-6 h-6 text-orange-500 animate-ping opacity-20">
               <AlertTriangle className="w-full h-full" />
             </div>
           </div>
           
-          <div className="space-y-3 min-w-0">
+          <div className="space-y-3 min-w-0 flex-1">
             <h3 className="text-lg font-medium text-orange-500/90 tracking-tight">
               {t('announcement.title')}
             </h3>
