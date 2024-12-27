@@ -1,9 +1,5 @@
 export const jsonSources = [
   {
-    name: 'Local',
-    url: '/api/local-games'
-  },
-  {
     name: 'Empress',
     url: 'https://hydralinks.cloud/sources/empress.json'
   },
@@ -53,11 +49,3 @@ export const jsonSources = [
   }
   // Add more sources as needed
 ]
-
-// For development/testing, you can use local paths
-export const localSources = [
-  {
-    name: 'empress',
-    path: '/data/empress.json'
-  }
-] 
