@@ -9,15 +9,28 @@ import { Github, MessageSquare, Globe } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import Announcement from './components/Announcement'
+import GameResult from './components/GameResult'
+import { searchGames, GameData } from './lib/searchGames'
 
 export default function Home() {
   const router = useRouter()
   const [selectedSources, setSelectedSources] = useLocalStorage<string[]>('selectedSources', [])
   const { t } = useLanguage()
+  const [results, setResults] = useState<GameData[]>([])
 
-  const handleSearch = (query: string) => {
+  const handleSearch = async (query: string) => {
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query)}`)
+      const searchResults = await searchGames(query, selectedSources)
+      
+      // Log before setting state
+      console.log('Before setting state:', searchResults.map(r => ({
+        name: r.name,
+        genres: r.genres,
+        isArray: Array.isArray(r.genres)
+      })));
+
+      setResults(searchResults);
     }
   }
 
@@ -134,6 +147,17 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Game Results */}
+        {results.map((game) => (
+          <GameResult
+            key={game.name}
+            name={game.name}
+            image={game.image}
+            sources={game.sources}
+            genres={game.genres}
+          />
+        ))}
       </div>
     </main>
   )

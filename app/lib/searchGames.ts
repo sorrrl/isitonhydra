@@ -1,10 +1,18 @@
-import steamGames from '@/data/steam-games.json'
 import { jsonSources } from '../config/sources'
 
 export interface GameData {
   name: string
   image?: string
   sources: ProcessedDownload[]
+  genres: string[]
+}
+
+interface ProcessedDownload {
+  name: string
+  url: string
+  uploadDate: string
+  fileSize?: string
+  additional_urls?: { name: string; url: string; description?: string }[]
 }
 
 interface Download {
@@ -43,66 +51,157 @@ interface PreparedGame extends SteamGame {
   cleanName: string;
 }
 
-// Function to prepare steam games for searching
-function prepareGames(games: any[]): PreparedGame[] {
-  return games.map(game => ({
-    ...game,
-    cleanName: game.name.toLowerCase().replace(/[^\w\s]/g, ' ').trim()
-  }));
+interface HydraApiGame {
+  title: string;
+  genres: string[];
+  objectId: string;
 }
 
-// Prepare steam games once for faster searching
-const preparedSteamGames = prepareGames(steamGames as any[]);
+interface HydraApiResponse {
+  count: number;
+  edges: Array<{
+    id: string;
+    objectId: string;
+    title: string;
+    genres: string[];
+  }>;
+}
 
-// Cache for source data to prevent repeated fetches
+interface HydraApiRequest {
+  title: string;
+  take: number;
+  skip: number;
+}
+
+// Cache for API results to prevent repeated requests
+const apiCache = new Map<string, {
+  data: HydraApiGame[];
+  timestamp: number;
+}>();
+
+const API_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+const MIN_QUERY_LENGTH = 3;
+const MAX_RESULTS = 5;
+
+// New function to fetch games from Hydra API
+async function fetchGamesFromApi(query: string): Promise<HydraApiGame[]> {
+  // Check cache first
+  const cacheKey = query.toLowerCase();
+  const cached = apiCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < API_CACHE_DURATION) {
+    return cached.data;
+  }
+
+  try {
+    const requestBody = {
+      title: query,
+      take: MAX_RESULTS,
+      skip: 0
+    };
+    console.log('Sending request to API:', requestBody);
+
+    const response = await fetch('/api/hydra/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('API Response in client:', data);
+
+    // Check if data has the expected structure
+    if (!data || !data.edges) {
+      console.error('Unexpected API response format:', data);
+      return [];
+    }
+
+    // Transform the edges into our HydraApiGame format
+    const games: HydraApiGame[] = data.edges.map((edge: any) => {
+      // Add more detailed logging
+      const genres = edge.genres || [];
+      console.log('Processing API edge:', {
+        title: edge.title,
+        rawGenres: edge.genres,
+        processedGenres: genres,
+        isArray: Array.isArray(genres)
+      });
+
+      return {
+        title: edge.title,
+        genres: genres,
+        objectId: edge.objectId
+      };
+    });
+
+    console.log('Transformed games:', games);
+
+    // Update cache
+    apiCache.set(cacheKey, {
+      data: games,
+      timestamp: Date.now()
+    });
+
+    return games;
+  } catch (error) {
+    console.error('Error fetching from Hydra API:', error);
+    return [];
+  }
+}
+
+// Source data cache remains the same
 const sourceCache = new Map<string, {
   data: SourceData;
   timestamp: number;
 }>();
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
-const MIN_QUERY_LENGTH = 3;
-const MAX_RESULTS = 20; // Limit total results
+const CACHE_DURATION = 5 * 60 * 1000;
 
-// First, find matching Steam games
-function findMatchingSteamGames(searchQuery: string): SteamGame[] {
-  const cleanedQuery = searchQuery.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
-  const queryWords = cleanedQuery.split(' ').filter(word => word.length > 2);
+// Add a request cache to track in-flight requests
+const inFlightRequests = new Map<string, Promise<SourceData | null>>();
 
-  return preparedSteamGames
-    .filter(game => {
-      // Check if game name contains all search query words
-      return queryWords.every(word => game.cleanName.includes(word));
-    })
-    .map(game => ({
-      name: game.name,
-      id: game.id
-    }));
-}
-
-// Then, find matching downloads for each Steam game
+// Modified to use game title from API more effectively
 async function findMatchingDownloads(
-  steamGame: SteamGame,
+  game: HydraApiGame,
   source: { name: string; url: string; additional_urls?: any[] }
 ): Promise<ProcessedDownload[]> {
   const data = await fetchSourceData(source);
   if (!data?.downloads) return [];
 
-  const cleanGameName = steamGame.name.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
-  const gameWords = cleanGameName.split(' ').filter(word => word.length > 2);
+  // Clean the game title once
+  const cleanGameName = game.title.toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .trim();
 
-  // Find downloads that match this game
-  const matches = data.downloads.filter(download => {
-    const cleanTitle = download.title.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
+  // Split into words and filter out short words and common words
+  const gameWords = cleanGameName
+    .split(' ')
+    .filter(word => word.length > 2)
+    .filter(word => !['the', 'and', 'for', 'of'].includes(word));
+
+  // Find exact matches first
+  let matches = data.downloads.filter(download => {
+    const cleanTitle = download.title.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .trim();
+    
+    // Try exact match first
+    if (cleanTitle === cleanGameName) return true;
+
+    // Then try word matching
     return gameWords.every(word => cleanTitle.includes(word));
   });
 
-  // Sort by date and take the most recent
+  // Sort matches by date
   const sortedMatches = matches.sort((a, b) => 
     new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
   );
 
-  // Return only the most recent match
   if (sortedMatches.length > 0) {
     const match = sortedMatches[0];
     return [{
@@ -124,76 +223,87 @@ async function fetchSourceData(source: { name: string; url: string }): Promise<S
     return cached.data;
   }
 
-  try {
-    const response = await fetch(`/api/sources?source=${encodeURIComponent(source.name)}`, {
-      cache: 'no-store'
-    });
-
-    if (!response.ok) return null;
-
-    const data: SourceData = await response.json();
-    
-    // Update cache
-    sourceCache.set(source.name, {
-      data,
-      timestamp: Date.now()
-    });
-
-    return data;
-  } catch (error) {
-    console.error(`Error fetching from ${source.name}:`, error);
-    return null;
+  // Check if there's already an in-flight request for this source
+  const existingRequest = inFlightRequests.get(source.name);
+  if (existingRequest) {
+    return existingRequest;
   }
+
+  // Create new request
+  const request = new Promise<SourceData | null>(async (resolve) => {
+    try {
+      const response = await fetch(`/api/sources?source=${encodeURIComponent(source.name)}`, {
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        resolve(null);
+        return;
+      }
+
+      const data: SourceData = await response.json();
+      
+      // Update cache
+      sourceCache.set(source.name, {
+        data,
+        timestamp: Date.now()
+      });
+
+      resolve(data);
+    } catch (error) {
+      console.error(`Error fetching from ${source.name}:`, error);
+      resolve(null);
+    }
+  });
+
+  // Store the request promise
+  inFlightRequests.set(source.name, request);
+
+  // Clean up after request completes
+  request.finally(() => {
+    inFlightRequests.delete(source.name);
+  });
+
+  return request;
 }
 
-interface ProcessedDownload {
-  name: string;
-  url: string;
-  sourceUrl?: string;
-  uploadDate: string;
-  fileSize?: string;
-  additional_urls?: { name: string; url: string; description?: string }[];
-}
-
+// Main search function updated
 export async function searchGames(query: string, selectedSources: string[] = []): Promise<GameData[]> {
   if (!query || query.length < MIN_QUERY_LENGTH) {
     return [];
   }
 
-  // 1. First find all matching Steam games
-  const matchingSteamGames = findMatchingSteamGames(query);
-  if (matchingSteamGames.length === 0) return [];
+  console.log('Searching for:', query);
 
-  // 2. For each Steam game, search through selected sources (or all if none selected)
+  // 1. Fetch games from Hydra API
+  const hydraGames = await fetchGamesFromApi(query);
+  
+  // Safe logging with null check
+  console.log('Found games from API:', hydraGames?.map(g => g.title) || []);
+
+  if (!hydraGames || hydraGames.length === 0) {
+    console.log('No games found from API');
+    return [];
+  }
+
+  // 2. For each game, search through selected sources
   const results = new Map<string, GameData>();
   const sourcesToSearch = selectedSources.length > 0 
     ? jsonSources.filter(source => selectedSources.includes(source.name))
     : jsonSources;
 
-  for (const steamGame of matchingSteamGames) {
+  for (const hydraGame of hydraGames) {
+    console.log('Processing game:', hydraGame.title);
     const sources: ProcessedDownload[] = [];
 
     // Search through selected sources
     for (const source of sourcesToSearch) {
       try {
-        console.log('Processing source config:', {
-          name: source.name,
-          hasAdditionalUrls: !!source.additional_urls,
-          additionalUrls: source.additional_urls
-        });
-
-        const downloads = await findMatchingDownloads(steamGame, source);
+        console.log('Checking source:', source.name);
+        const downloads = await findMatchingDownloads(hydraGame, source);
         if (downloads.length > 0) {
-          const processedSource = {
-            name: source.name,
-            url: downloads[0].url,
-            uploadDate: downloads[0].uploadDate,
-            fileSize: downloads[0].fileSize,
-            additional_urls: source.additional_urls
-          };
-
-          console.log('Created processed source:', processedSource);
-          sources.push(processedSource);
+          console.log('Found matches in source:', source.name);
+          sources.push(...downloads);
         }
       } catch (error) {
         console.error(`Error processing source ${source.name}:`, error);
@@ -202,21 +312,50 @@ export async function searchGames(query: string, selectedSources: string[] = [])
 
     // Only add games that have sources
     if (sources.length > 0) {
-      results.set(steamGame.name, {
-        name: steamGame.name,
-        image: `https://cdn.cloudflare.steamstatic.com/steam/apps/${steamGame.id}/header.jpg`,
-        sources: sources
+      // Create a deep copy of genres
+      const gameGenres = JSON.parse(JSON.stringify(hydraGame.genres || []));
+      
+      console.log('Creating GameData:', {
+        title: hydraGame.title,
+        originalGenres: hydraGame.genres,
+        copiedGenres: gameGenres
       });
+
+      const gameData: GameData = {
+        name: hydraGame.title,
+        genres: gameGenres,
+        image: `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`,
+        sources: sources
+      };
+
+      // Verify the data
+      console.log('GameData created:', {
+        name: gameData.name,
+        genres: gameData.genres,
+        hasGenres: Array.isArray(gameData.genres),
+        genresLength: gameData.genres.length
+      });
+
+      results.set(hydraGame.title, gameData);
     }
   }
 
-  // Return sorted results
-  return Array.from(results.values())
+  const finalResults = Array.from(results.values())
     .sort((a, b) => {
       const latestA = Math.max(...a.sources.map(s => new Date(s.uploadDate).getTime()));
       const latestB = Math.max(...b.sources.map(s => new Date(s.uploadDate).getTime()));
       return latestB - latestA;
     });
+
+  // Add this detailed log
+  console.log('Final results before return:', finalResults.map(r => ({
+    name: r.name,
+    hasGenres: Boolean(r.genres),
+    genresLength: r.genres?.length,
+    actualGenres: r.genres
+  })));
+
+  return finalResults;
 }
 
 export function parseFileSize(size: string): number {

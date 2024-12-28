@@ -1,6 +1,6 @@
 'use client'
 
-import { searchGames, parseFileSize } from '../lib/searchGames'
+import { searchGames, parseFileSize, GameData } from '../lib/searchGames'
 import SearchBar from '@/components/SearchBar'
 import GameResult from '@/app/components/GameResult'
 import { ArrowLeft, Calendar, HardDrive, Search, AlertTriangle, Github, MessageSquare } from 'lucide-react'
@@ -14,18 +14,6 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import { useLanguage } from '../context/LanguageContext'
 
 type SortType = 'date' | 'size'
-
-interface GameData {
-  name: string;
-  image?: string;
-  sources: { 
-    name: string;
-    url: string;
-    sourceUrl?: string;
-    uploadDate: string;
-    fileSize?: string;
-  }[];
-}
 
 function SearchContent() {
   const router = useRouter()
@@ -45,7 +33,14 @@ function SearchContent() {
       
       const searchTimeout = setTimeout(() => {
         searchGames(query, selectedSources)
-          .then(setResults)
+          .then((searchResults) => {
+            console.log('Search results with genres:', searchResults.map(r => ({
+              name: r.name,
+              hasGenres: Boolean(r.genres),
+              genres: r.genres
+            })));
+            setResults(searchResults);
+          })
           .finally(() => {
             setIsSearching(false)
           })
@@ -154,6 +149,7 @@ function SearchContent() {
                   name={game.name}
                   image={game.image}
                   sources={game.sources}
+                  genres={game.genres}
                 />
               ))}
             </div>

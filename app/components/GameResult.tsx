@@ -6,6 +6,7 @@ import UrlSelectionPopup from './UrlSelectionPopup'
 import { useLanguage } from '../context/LanguageContext'
 import { Calendar, Clock, Copy, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { jsonSources } from '../config/sources'
 
 interface Source {
   name: string
@@ -23,13 +24,41 @@ interface GameResultProps {
   name: string
   image?: string
   sources: Source[]
+  genres?: string[]
 }
 
-export default function GameResult({ name, image, sources }: GameResultProps) {
+export default function GameResult({ name, image, sources, genres = [] }: GameResultProps) {
+  console.log('GameResult Debug:', {
+    componentName: 'GameResult',
+    props: {
+      name,
+      genres: {
+        value: genres,
+        type: typeof genres,
+        isArray: Array.isArray(genres),
+        length: genres?.length,
+        entries: Array.isArray(genres) ? [...genres] : 'not an array'
+      }
+    }
+  });
+
+  const genresList = Array.isArray(genres) ? genres : [];
+  
+  console.log('GameResult rendering:', {
+    name,
+    genresProvided: genresList,
+    genresLength: genresList.length
+  });
+  
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [showUrlPopup, setShowUrlPopup] = useState(false)
   const [selectedSource, setSelectedSource] = useState<Source | null>(null)
   const { t, language } = useLanguage()
+
+  const getSourceUrl = (sourceName: string) => {
+    const sourceConfig = jsonSources.find(s => s.name === sourceName);
+    return sourceConfig?.url || '';
+  };
 
   return (
     <>
@@ -47,7 +76,21 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
 
         <div className="relative z-10 flex flex-col h-full backdrop-blur-sm">
           <h2 className="px-5 py-4 text-xl font-bold text-white/90 sm:text-2xl border-b border-zinc-800/50 flex items-center justify-between">
-            <span className="truncate">{name}</span>
+            <div className="flex flex-col">
+              <span className="truncate">{name}</span>
+              {genresList.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {genresList.map((genre, index) => (
+                    <span 
+                      key={index}
+                      className="text-xs font-normal text-zinc-400 bg-zinc-800/50 px-2 py-0.5 rounded-full"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
             <span className="text-xs font-normal text-zinc-500">
               {sources.length} {sources.length === 1 ? 'source' : 'sources'}
             </span>
@@ -56,6 +99,7 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
           <div className="divide-y divide-zinc-800/30">
             {sources.map((source, index) => {
               const hasAdditionalUrls = source.additional_urls && source.additional_urls.length > 0;
+              const sourceUrl = getSourceUrl(source.name);
               
               return (
                 <div
@@ -96,8 +140,8 @@ export default function GameResult({ name, image, sources }: GameResultProps) {
                   ) : (
                     <div className="relative flex-shrink-0 ml-8">
                       <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(source.url);
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(sourceUrl);
                           setCopiedIndex(index);
                           setTimeout(() => setCopiedIndex(null), 2000);
                         }}

@@ -9,7 +9,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/empress.php',
+        url: 'https://hydrasources.su/sources/empress.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -24,7 +24,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/fitgirl.php',
+        url: 'https://hydrasources.su/sources/fitgirl.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -39,7 +39,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/atop-games.php',
+        url: 'https://hydrasources.su/sources/atop-games.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -54,7 +54,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/dodi.php',
+        url: 'https://hydrasources.su/sources/dodi.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -69,7 +69,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/gog.php',
+        url: 'https://hydrasources.su/sources/gog.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -84,7 +84,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/kaoskrew.php',
+        url: 'https://hydrasources.su/sources/kaoskrew.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -99,7 +99,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/onlinefix.php',
+        url: 'https://hydrasources.su/sources/onlinefix.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -114,7 +114,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/xatab.php',
+        url: 'https://hydrasources.su/sources/xatab.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -141,7 +141,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/steamrip.php',
+        url: 'https://hydrasources.su/sources/steamrip.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -156,7 +156,7 @@ export const jsonSources = [
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/steamrip-software.php',
+        url: 'https://hydrasources.su/sources/steamrip-software.json',
         description: 'RUSSIAN ONLY'
       }
     ]
