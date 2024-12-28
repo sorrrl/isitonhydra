@@ -27,50 +27,10 @@ interface SourceData {
   downloads: Download[]
 }
 
-interface ConsolidatedGame {
-  name: string
-  cleanName: string
-  image?: string
-  sources: {
-    name: string
-    url: string
-    fileSize: string
-    uploadDate: string
-  }[]
-  largestSize: string
-  mostRecentDate: string
-}
-
-interface SteamGame {
-  id: number;
-  name: string;
-  clientIcon?: string | null;
-}
-
-interface PreparedGame extends SteamGame {
-  cleanName: string;
-}
-
 interface HydraApiGame {
-  title: string;
-  genres: string[];
-  objectId: string;
-}
-
-interface HydraApiResponse {
-  count: number;
-  edges: Array<{
-    id: string;
-    objectId: string;
-    title: string;
-    genres: string[];
-  }>;
-}
-
-interface HydraApiRequest {
-  title: string;
-  take: number;
-  skip: number;
+  title: string
+  genres: string[]
+  objectId: string
 }
 
 // Cache for API results to prevent repeated requests
@@ -185,7 +145,7 @@ async function findMatchingDownloads(
     .filter(word => !['the', 'and', 'for', 'of'].includes(word));
 
   // Find exact matches first
-  let matches = data.downloads.filter(download => {
+  const matches = data.downloads.filter(download => {
     const cleanTitle = download.title.toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .trim();

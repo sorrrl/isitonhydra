@@ -3,7 +3,7 @@
 import { searchGames, parseFileSize, GameData } from '../lib/searchGames'
 import SearchBar from '@/components/SearchBar'
 import GameResult from '@/app/components/GameResult'
-import { ArrowLeft, Calendar, HardDrive, Search, AlertTriangle, Github, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Calendar, AlertTriangle } from 'lucide-react'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'

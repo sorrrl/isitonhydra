@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { Calendar, Clock, Copy, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { jsonSources } from '../config/sources'
+import Image from 'next/image'
 
 interface Source {
   name: string
@@ -65,10 +66,11 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
       <div className="relative overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
         {image && (
           <div className="absolute inset-0">
-            <img
+            <Image
               src={image}
               alt={name}
-              className="w-full h-full object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
+              fill
+              className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/80 to-black/70" />
           </div>
