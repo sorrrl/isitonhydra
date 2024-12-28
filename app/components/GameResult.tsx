@@ -57,6 +57,8 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   const { t, language } = useLanguage()
   const [imageError, setImageError] = useState(false)
 
+  const isValidImageUrl = image && image.includes('/apps/') && image.endsWith('/header.jpg');
+
   const getSourceUrl = (sourceName: string) => {
     const sourceConfig = jsonSources.find(s => s.name === sourceName);
     return sourceConfig?.url || '';
@@ -65,14 +67,21 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   return (
     <>
       <div className="relative overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
-        {image && !imageError && (
+        {isValidImageUrl && !imageError && (
           <div className="absolute inset-0">
             <Image
               src={image}
               alt={name}
               fill
               className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
-              onError={() => setImageError(true)}
+              onError={(e) => {
+                console.error('Image load error:', {
+                  src: image,
+                  name: name,
+                  error: e
+                });
+                setImageError(true);
+              }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority={false}
             />

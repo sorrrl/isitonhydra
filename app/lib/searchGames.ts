@@ -284,7 +284,14 @@ export async function searchGames(query: string, selectedSources: string[] = [])
       const gameData: GameData = {
         name: hydraGame.title,
         genres: gameGenres,
-        image: `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`,
+        image: (() => {
+          const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`;
+          console.log('Constructed image URL:', {
+            objectId: hydraGame.objectId,
+            fullUrl: imageUrl
+          });
+          return imageUrl;
+        })(),
         sources: sources
       };
 
