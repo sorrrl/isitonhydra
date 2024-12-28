@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { formatDate } from '../lib/utils'
 import UrlSelectionPopup from './UrlSelectionPopup'
 import { useLanguage } from '../context/LanguageContext'
@@ -56,6 +56,26 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   const [selectedSource, setSelectedSource] = useState<Source | null>(null)
   const { t, language } = useLanguage()
   const [imageError, setImageError] = useState(false)
+  const [imageUrl, setImageUrl] = useState(image)
+
+  // Add image URL validation and fallback
+  useEffect(() => {
+    if (image) {
+      // Try to load the image first
+      const img = new Image();
+      img.src = image;
+      img.onload = () => {
+        setImageUrl(image);
+        setImageError(false);
+      };
+      img.onerror = () => {
+        // If the header.jpg fails, try capsule_616x353.jpg
+        const fallbackUrl = image.replace('header.jpg', 'capsule_616x353.jpg');
+        console.log('Trying fallback image:', fallbackUrl);
+        setImageUrl(fallbackUrl);
+      };
+    }
+  }, [image]);
 
   const isValidImageUrl = image && image.includes('/apps/') && image.endsWith('/header.jpg');
 
@@ -67,16 +87,16 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   return (
     <>
       <div className="relative overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
-        {isValidImageUrl && !imageError && (
+        {imageUrl && !imageError && (
           <div className="absolute inset-0">
             <Image
-              src={image}
+              src={imageUrl}
               alt={name}
               fill
               className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
               onError={(e) => {
                 console.error('Image load error:', {
-                  src: image,
+                  src: imageUrl,
                   name: name,
                   error: e
                 });

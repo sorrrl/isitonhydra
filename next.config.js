@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.cloudflare.steamstatic.com',
-        pathname: '/**',
+        pathname: '/steam/apps/**',
       },
     ],
   },
