@@ -56,25 +56,16 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   const [selectedSource, setSelectedSource] = useState<Source | null>(null)
   const { t, language } = useLanguage()
   const [imageError, setImageError] = useState(false)
-  const [imageUrl, setImageUrl] = useState(image)
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
 
-  // Add image URL validation and fallback
+  // Simplified image URL validation and fallback
   useEffect(() => {
-    if (image) {
-      // Try to load the image first
-      const img = new Image();
-      img.src = image;
-      img.onload = () => {
-        setImageUrl(image);
-        setImageError(false);
-      };
-      img.onerror = () => {
-        // If the header.jpg fails, try capsule_616x353.jpg
-        const fallbackUrl = image.replace('header.jpg', 'capsule_616x353.jpg');
-        console.log('Trying fallback image:', fallbackUrl);
-        setImageUrl(fallbackUrl);
-      };
-    }
+    if (!image) return;
+
+    // Start with the original image URL
+    setImageUrl(image);
+
+    // We'll let the Image component's onError handle the fallback
   }, [image]);
 
   const isValidImageUrl = image && image.includes('/apps/') && image.endsWith('/header.jpg');
@@ -94,13 +85,17 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
               alt={name}
               fill
               className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
-              onError={(e) => {
-                console.error('Image load error:', {
-                  src: imageUrl,
-                  name: name,
-                  error: e
-                });
-                setImageError(true);
+              onError={() => {
+                // If the header.jpg fails, try capsule_616x353.jpg
+                if (imageUrl.includes('header.jpg')) {
+                  const fallbackUrl = imageUrl.replace('header.jpg', 'capsule_616x353.jpg');
+                  console.log('Trying fallback image:', fallbackUrl);
+                  setImageUrl(fallbackUrl);
+                } else {
+                  // If fallback also fails, show error state
+                  console.error('All image attempts failed for:', name);
+                  setImageError(true);
+                }
               }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority={false}
