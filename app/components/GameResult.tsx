@@ -60,17 +60,21 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
 
   // Try different image formats in sequence
   const tryNextImageFormat = (currentUrl: string) => {
-    // Make sure we're using the correct path structure
-    const baseUrl = currentUrl.split('/header.jpg')[0];
+    // Extract the original Steam URL from our proxy URL
+    const params = new URLSearchParams(currentUrl.split('?')[1]);
+    const originalUrl = params.get('url') || '';
     
-    if (currentUrl.includes('header.jpg')) {
-      return `${baseUrl}/capsule_616x353.jpg`;
+    if (originalUrl.includes('header.jpg')) {
+      const newUrl = originalUrl.replace('header.jpg', 'capsule_616x353.jpg');
+      return `/api/image-proxy?url=${encodeURIComponent(newUrl)}`;
     }
-    if (currentUrl.includes('capsule_616x353.jpg')) {
-      return `${baseUrl}/capsule_231x87.jpg`;
+    if (originalUrl.includes('capsule_616x353.jpg')) {
+      const newUrl = originalUrl.replace('capsule_616x353.jpg', 'capsule_231x87.jpg');
+      return `/api/image-proxy?url=${encodeURIComponent(newUrl)}`;
     }
-    if (currentUrl.includes('capsule_231x87.jpg')) {
-      return `${baseUrl}/capsule_184x69.jpg`;
+    if (originalUrl.includes('capsule_231x87.jpg')) {
+      const newUrl = originalUrl.replace('capsule_231x87.jpg', 'capsule_184x69.jpg');
+      return `/api/image-proxy?url=${encodeURIComponent(newUrl)}`;
     }
     return null;
   };

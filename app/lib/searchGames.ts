@@ -285,13 +285,15 @@ export async function searchGames(query: string, selectedSources: string[] = [])
         name: hydraGame.title,
         genres: gameGenres,
         image: (() => {
-          // Use the exact Steam CDN URL structure
-          const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`;
-          console.log('Constructed image URL:', {
+          const steamUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`;
+          // Use our proxy instead
+          const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(steamUrl)}`;
+          console.log('Constructed proxy image URL:', {
             objectId: hydraGame.objectId,
-            fullUrl: imageUrl
+            originalUrl: steamUrl,
+            proxyUrl
           });
-          return imageUrl;
+          return proxyUrl;
         })(),
         sources: sources
       };
