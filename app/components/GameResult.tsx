@@ -55,6 +55,7 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   const [showUrlPopup, setShowUrlPopup] = useState(false)
   const [selectedSource, setSelectedSource] = useState<Source | null>(null)
   const { t, language } = useLanguage()
+  const [imageError, setImageError] = useState(false)
 
   const getSourceUrl = (sourceName: string) => {
     const sourceConfig = jsonSources.find(s => s.name === sourceName);
@@ -64,13 +65,16 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   return (
     <>
       <div className="relative overflow-hidden rounded-xl bg-zinc-900/50 border border-zinc-800/50 transition-all duration-300 hover:border-zinc-700/50 hover:shadow-xl hover:shadow-purple-500/5">
-        {image && (
+        {image && !imageError && (
           <div className="absolute inset-0">
             <Image
               src={image}
               alt={name}
               fill
               className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
+              onError={() => setImageError(true)}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={false}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/80 to-black/70" />
           </div>
