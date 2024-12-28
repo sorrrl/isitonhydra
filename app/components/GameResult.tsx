@@ -60,14 +60,17 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
 
   // Try different image formats in sequence
   const tryNextImageFormat = (currentUrl: string) => {
-    if (currentUrl.includes('library_600x900.jpg')) {
-      return currentUrl.replace('library_600x900.jpg', 'header.jpg');
+    // Replace the domain if it's the old one
+    const updatedUrl = currentUrl.replace('cdn.cloudflare.steamstatic.com', 'cdn.akamai.steamstatic.com');
+    
+    if (updatedUrl.includes('library_600x900.jpg')) {
+      return updatedUrl.replace('library_600x900.jpg', 'header.jpg');
     }
-    if (currentUrl.includes('header.jpg')) {
-      return currentUrl.replace('header.jpg', 'capsule_616x353.jpg');
+    if (updatedUrl.includes('header.jpg')) {
+      return updatedUrl.replace('header.jpg', 'capsule_616x353.jpg');
     }
-    if (currentUrl.includes('capsule_616x353.jpg')) {
-      return currentUrl.replace('capsule_616x353.jpg', 'library_hero.jpg');
+    if (updatedUrl.includes('capsule_616x353.jpg')) {
+      return updatedUrl.replace('capsule_616x353.jpg', 'library_hero.jpg');
     }
     return null;
   };
