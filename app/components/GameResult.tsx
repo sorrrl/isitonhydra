@@ -60,19 +60,17 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
 
   // Try different image formats in sequence
   const tryNextImageFormat = (currentUrl: string) => {
-    // Replace the domain if it's the old one
-    const updatedUrl = currentUrl
-      .replace('cdn.cloudflare.steamstatic.com', 'cdn.akamai.steampowered.com')
-      .replace('cdn.akamai.steamstatic.com', 'cdn.akamai.steampowered.com');
+    // Make sure we're using the correct path structure
+    const baseUrl = currentUrl.split('/header.jpg')[0];
     
-    if (updatedUrl.includes('header.jpg')) {
-      return updatedUrl.replace('header.jpg', 'capsule_616x353.jpg');
+    if (currentUrl.includes('header.jpg')) {
+      return `${baseUrl}/capsule_616x353.jpg`;
     }
-    if (updatedUrl.includes('capsule_616x353.jpg')) {
-      return updatedUrl.replace('capsule_616x353.jpg', 'capsule_231x87.jpg');
+    if (currentUrl.includes('capsule_616x353.jpg')) {
+      return `${baseUrl}/capsule_231x87.jpg`;
     }
-    if (updatedUrl.includes('capsule_231x87.jpg')) {
-      return updatedUrl.replace('capsule_231x87.jpg', 'capsule_184x69.jpg');
+    if (currentUrl.includes('capsule_231x87.jpg')) {
+      return `${baseUrl}/capsule_184x69.jpg`;
     }
     return null;
   };

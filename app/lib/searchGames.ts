@@ -285,8 +285,8 @@ export async function searchGames(query: string, selectedSources: string[] = [])
         name: hydraGame.title,
         genres: gameGenres,
         image: (() => {
-          // Use Steam's store CDN
-          const imageUrl = `https://cdn.akamai.steampowered.com/steam/apps/${hydraGame.objectId}/header.jpg`;
+          // Use the exact Steam CDN URL structure
+          const imageUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${hydraGame.objectId}/header.jpg`;
           console.log('Constructed image URL:', {
             objectId: hydraGame.objectId,
             fullUrl: imageUrl

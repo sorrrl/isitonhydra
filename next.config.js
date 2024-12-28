@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.akamai.steampowered.com',
+        hostname: 'cdn.cloudflare.steamstatic.com',
         pathname: '/steam/**',
       },
     ],
