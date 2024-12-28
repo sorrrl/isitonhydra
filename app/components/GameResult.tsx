@@ -58,14 +58,24 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
   const [imageError, setImageError] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
 
-  // Simplified image URL validation and fallback
+  // Try different image formats in sequence
+  const tryNextImageFormat = (currentUrl: string) => {
+    if (currentUrl.includes('library_600x900.jpg')) {
+      return currentUrl.replace('library_600x900.jpg', 'header.jpg');
+    }
+    if (currentUrl.includes('header.jpg')) {
+      return currentUrl.replace('header.jpg', 'capsule_616x353.jpg');
+    }
+    if (currentUrl.includes('capsule_616x353.jpg')) {
+      return currentUrl.replace('capsule_616x353.jpg', 'library_hero.jpg');
+    }
+    return null;
+  };
+
   useEffect(() => {
     if (!image) return;
-
-    // Start with the original image URL
     setImageUrl(image);
-
-    // We'll let the Image component's onError handle the fallback
+    setImageError(false);
   }, [image]);
 
   const isValidImageUrl = image && image.includes('/apps/') && image.endsWith('/header.jpg');
@@ -86,14 +96,12 @@ export default function GameResult({ name, image, sources, genres = [] }: GameRe
               fill
               className="object-cover opacity-40 transition-opacity duration-300 group-hover:opacity-50"
               onError={() => {
-                // If the header.jpg fails, try capsule_616x353.jpg
-                if (imageUrl.includes('header.jpg')) {
-                  const fallbackUrl = imageUrl.replace('header.jpg', 'capsule_616x353.jpg');
-                  console.log('Trying fallback image:', fallbackUrl);
-                  setImageUrl(fallbackUrl);
+                const nextUrl = tryNextImageFormat(imageUrl);
+                if (nextUrl) {
+                  console.log('Trying next image format:', nextUrl);
+                  setImageUrl(nextUrl);
                 } else {
-                  // If fallback also fails, show error state
-                  console.error('All image attempts failed for:', name);
+                  console.error('All image formats failed for:', name);
                   setImageError(true);
                 }
               }}
