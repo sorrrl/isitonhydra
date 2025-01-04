@@ -8,7 +8,6 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 import { Github, MessageSquare, Globe } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 import LanguageSwitcher from './components/LanguageSwitcher'
-import Announcement from './components/Announcement'
 import GameResult from './components/GameResult'
 import { searchGames, GameData } from './lib/searchGames'
 
@@ -39,13 +38,6 @@ export default function Home() {
       {/* Language Switcher */}
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
-      </div>
-
-      {/* Announcement - Left side fixed with better positioning */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 w-[22rem] z-40 hidden lg:block pointer-events-none">
-        <div className="pointer-events-auto">
-          <Announcement />
-        </div>
       </div>
 
       {/* Main Content - Centered without margin */}
