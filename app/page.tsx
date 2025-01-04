@@ -27,13 +27,15 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 relative">
-      {/* Language Switcher */}
-      <div className="absolute top-4 right-4">
-        <LanguageSwitcher />
+      {/* Language Switcher - Updated positioning */}
+      <div className="absolute top-4 right-4 sm:right-4 z-50">
+        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-lg p-1">
+          <LanguageSwitcher />
+        </div>
       </div>
 
-      {/* Main Content - Centered without margin */}
-      <div className="w-full max-w-2xl space-y-8">
+      {/* Main Content - Added padding-top for mobile */}
+      <div className="w-full max-w-2xl space-y-8 pt-12 sm:pt-0">
         <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
           {t('title')}
         </h1>
