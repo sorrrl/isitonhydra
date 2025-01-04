@@ -7,9 +7,9 @@ import { useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { Github, MessageSquare, Globe } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
-import LanguageSwitcher from './components/LanguageSwitcher'
 import GameResult from './components/GameResult'
 import { searchGames, GameData } from './lib/searchGames'
+import LanguageSwitcher from './components/LanguageSwitcher'
 
 export default function Home() {
   const router = useRouter()
@@ -26,16 +26,18 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 relative">
-      {/* Language Switcher - Updated positioning */}
-      <div className="absolute top-4 right-4 sm:right-4 z-50">
-        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-lg p-1">
-          <LanguageSwitcher />
+    <main className="flex min-h-screen flex-col items-center p-4 relative">
+      {/* Language Switcher - Adjusted for mobile */}
+      <div className="w-full max-w-2xl mb-8">
+        <div className="flex justify-end">
+          <div className="bg-zinc-900/50 backdrop-blur-sm rounded-lg p-1">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
 
-      {/* Main Content - Added padding-top for mobile */}
-      <div className="w-full max-w-2xl space-y-8 pt-12 sm:pt-0">
+      {/* Main Content - Removed justify-center to prevent overlap */}
+      <div className="w-full max-w-2xl space-y-8">
         <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
           {t('title')}
         </h1>
