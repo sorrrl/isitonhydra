@@ -21,15 +21,7 @@ export default function Home() {
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query)}`)
       const searchResults = await searchGames(query, selectedSources)
-      
-      // Log before setting state
-      console.log('Before setting state:', searchResults.map(r => ({
-        name: r.name,
-        genres: r.genres,
-        isArray: Array.isArray(r.genres)
-      })));
-
-      setResults(searchResults);
+      setResults(searchResults)
     }
   }
 
@@ -42,11 +34,6 @@ export default function Home() {
 
       {/* Main Content - Centered without margin */}
       <div className="w-full max-w-2xl space-y-8">
-        {/* Mobile Announcement */}
-        <div className="lg:hidden w-full mb-8">
-          <Announcement />
-        </div>
-
         <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
           {t('title')}
         </h1>
