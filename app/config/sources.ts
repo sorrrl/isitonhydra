@@ -15,21 +15,6 @@ export const jsonSources = [
     ]
   },
   {
-    name: 'FitGirl',
-    url: 'https://hydralinks.cloud/sources/fitgirl.json',
-    additional_urls: [
-      {
-        name: 'Original',
-        url: 'https://hydralinks.cloud/sources/fitgirl.json'
-      },
-      {
-        name: 'Russian',
-        url: 'https://hydrasources.su/sources/fitgirl.json',
-        description: 'RUSSIAN ONLY'
-      }
-    ]
-  },
-  {
     name: 'Atop Games',
     url: 'https://hydralinks.cloud/sources/atop-games.json',
     additional_urls: [
@@ -45,7 +30,22 @@ export const jsonSources = [
     ]
   },
   {
-    name: 'Dodi',
+    name: 'SteamRip',
+    url: 'https://hydralinks.cloud/sources/steamrip.json',
+    additional_urls: [
+      {
+        name: 'Original',
+        url: 'https://hydralinks.cloud/sources/steamrip.json'
+      },
+      {
+        name: 'Russian',
+        url: 'https://hydrasources.su/sources/steamrip.json',
+        description: 'RUSSIAN ONLY'
+      }
+    ]
+  },
+  {
+    name: 'DODI',
     url: 'https://hydralinks.cloud/sources/dodi.json',
     additional_urls: [
       {
@@ -60,16 +60,16 @@ export const jsonSources = [
     ]
   },
   {
-    name: 'GOG',
-    url: 'https://hydralinks.cloud/sources/gog.json',
+    name: 'FitGirl',
+    url: 'https://hydralinks.cloud/sources/fitgirl.json',
     additional_urls: [
       {
         name: 'Original',
-        url: 'https://hydralinks.cloud/sources/gog.json'
+        url: 'https://hydralinks.cloud/sources/fitgirl.json'
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/gog.json',
+        url: 'https://hydrasources.su/sources/fitgirl.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -90,7 +90,7 @@ export const jsonSources = [
     ]
   },
   {
-    name: 'onlinefix',
+    name: 'OnlineFix',
     url: 'https://hydralinks.cloud/sources/onlinefix.json',
     additional_urls: [
       {
@@ -100,6 +100,21 @@ export const jsonSources = [
       {
         name: 'Russian',
         url: 'https://hydrasources.su/sources/onlinefix.json',
+        description: 'RUSSIAN ONLY'
+      }
+    ]
+  },
+  {
+    name: 'TinyRepacks',
+    url: 'https://hydralinks.cloud/sources/tinyrepacks.json',
+    additional_urls: [
+      {
+        name: 'Original',
+        url: 'https://hydralinks.cloud/sources/tinyrepacks.json'
+      },
+      {
+        name: 'Russian',
+        url: 'https://hydrasources.su/sources/tinyrepacks.json',
         description: 'RUSSIAN ONLY'
       }
     ]
@@ -120,41 +135,58 @@ export const jsonSources = [
     ]
   },
   {
-    name: 'RuTracker(Kekitu)',
-    url: 'https://raw.githubusercontent.com/KekitU/rutracker-hydra-links/refs/heads/main/all_categories.json'
-  },
-  {
-    name: 'DavidKazumi',
-    url: 'https://davidkazumi.github.io/fontekazumi.json'
-  },
-  {
-    name: 'SteamRip(Direct download)',
-    url: 'https://hydralinks.cloud/sources/steamrip.json',
+    name: 'GOG',
+    url: 'https://hydralinks.cloud/sources/gog.json',
     additional_urls: [
       {
         name: 'Original',
-        url: 'https://hydralinks.cloud/sources/steamrip.json'
+        url: 'https://hydralinks.cloud/sources/gog.json'
       },
       {
         name: 'Russian',
-        url: 'https://hydrasources.su/sources/steamrip.json',
+        url: 'https://hydrasources.su/sources/gog.json',
         description: 'RUSSIAN ONLY'
       }
     ]
   },
   {
-    name: 'SteamRip(SOFTWARE ONLY)',
-    url: 'https://hydralinks.cloud/sources/steamrip-software.json',
+    name: 'Repack-Games',
+    url: 'https://hydralinks.cloud/sources/repack-games.json',
     additional_urls: [
       {
         name: 'Original',
-        url: 'https://hydralinks.cloud/sources/steamrip-software.json'
-      },
+        url: 'https://hydralinks.cloud/sources/repack-games.json'
+      }
+    ]
+  },
+  {
+    name: 'Shisui Source',
+    url: 'https://raw.githubusercontent.com/Shisuiicaro/source/refs/heads/main/shisuyssource.json',
+    additional_urls: [
       {
-        name: 'Russian',
-        url: 'https://hydrasources.su/sources/steamrip-software.json',
-        description: 'RUSSIAN ONLY'
+        name: 'Original',
+        url: 'https://raw.githubusercontent.com/Shisuiicaro/source/refs/heads/main/shisuyssource.json'
+      }
+    ]
+  },
+  {
+    name: 'Kazumi Source',
+    url: 'https://davidkazumi.github.io/fontekazumi.json',
+    additional_urls: [
+      {
+        name: 'Original',
+        url: 'https://davidkazumi.github.io/fontekazumi.json'
+      }
+    ]
+  },
+  {
+    name: 'Rutor',
+    url: 'https://raw.githubusercontent.com/Wkeynhk/Rutor/refs/heads/main/rutor.json',
+    additional_urls: [
+      {
+        name: 'Original',
+        url: 'https://raw.githubusercontent.com/Wkeynhk/Rutor/refs/heads/main/rutor.json'
       }
     ]
   }
-]
+];
